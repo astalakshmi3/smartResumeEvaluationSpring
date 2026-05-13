@@ -1,16 +1,16 @@
 spring:
   application:
-    name: smartResumeevaluation
+    name: smartResumeEvaluation
 
   ai:
-    model:
-      chat: openai
     retry:
       max-attempts: 1
-  openai:
-      api-key: ${KEY}
+
+    openai:
+      api-key: ${TEST}
+      # base-url: https://api.openai.com/
       chat:
         options:
           model: gpt-4o-mini
-          temperature: 0.7
           max-tokens: 1500
+          temperature: 0.7
