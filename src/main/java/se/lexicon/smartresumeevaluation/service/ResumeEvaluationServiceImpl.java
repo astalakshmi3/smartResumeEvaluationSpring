@@ -2,6 +2,7 @@ package se.lexicon.smartresumeevaluation.service;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.converter.BeanOutputConverter;
+import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.stereotype.Service;
 import se.lexicon.smartresumeevaluation.dto.ResumeEvaluationRequest;
 import se.lexicon.smartresumeevaluation.dto.ResumeEvaluationResponse;
@@ -9,16 +10,16 @@ import se.lexicon.smartresumeevaluation.dto.ResumeEvaluationResponse;
 @Service
 public class ResumeEvaluationServiceImpl implements ResumeEvaluationService {
 
-    private final ChatClient chatClient;
+    private final OpenAiChatModel openAiChatModel;
 
-    public ResumeEvaluationServiceImpl(ChatClient.Builder builder) {
-        this.chatClient = builder.build();
+    public ResumeEvaluationServiceImpl(OpenAiChatModel.Builder builder) {
+        this.openAiChatModel = builder.build();
     }
 
     @Override
     public ResumeEvaluationResponse evaluate(ResumeEvaluationRequest request) {
 
-        if (chatClient == null) {
+        if (openAiChatModel == null) {
             throw new IllegalStateException("Chat client is not available");
         }
         BeanOutputConverter<ResumeEvaluationResponse> converter =
@@ -48,10 +49,9 @@ public class ResumeEvaluationServiceImpl implements ResumeEvaluationService {
                 request.jobDescriptionText(),
                 converter.getFormat()
         );
-        String response = chatClient.prompt()
-                .user(prompt)
-                .call()
-                .content();
+        String response = openAiChatModel
+                .call(prompt)
+                .formatted();
 
         return converter.convert(response);
     }
